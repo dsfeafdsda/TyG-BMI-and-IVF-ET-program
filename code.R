@@ -64,7 +64,7 @@ read_docx() %>%
   body_add_flextable(tbl_flex) %>% 
   print(target = "table1.docx")
 
-####fet logistic####
+####Step 3. fet logistic####
 model <- glm(live_birth~  F_age + em_thickness+embryos_transferred+good_quality_embryos_transferred+
                FET_protocol+TyG_BMI_4cat+PCOS+DOR+adenomyosis+endometriosis, ,
              data = df_fet,
@@ -91,7 +91,7 @@ model <- glm(bio_pregnancy~  F_age + em_thickness+embryos_transferred+good_quali
 summary(model)
 
 
-####fresh logistic
+####Step 4.fresh logistic####
 model <- glm(live_birth~  F_age +em_thickness+embryos_transferred+good_quality_embryos_transferred+
                TyG_BMI_4cat+PCOS+DOR+adenomyosis+endometriosis ,
              data = df_fresh,
@@ -124,7 +124,7 @@ model <- glm(bio_pregnancy~  F_age +em_thickness+embryos_transferred+good_qualit
 summary(model) 
 
 
-####clbr logistic####
+####Step 5.clbr logistic####
 model <- glm(cLB_2cat ~ F_age+AFC+good_quality_embryos+PCOS+DOR+TyG_BMI_4cat+adenomyosis+endometriosis,
              data =merged_et,
              family = binomial(),
@@ -214,7 +214,7 @@ model <- glm(cLB_2cat ~ F_age+AFC+good_quality_embryos+PCOS+DOR+TyG_BMI_4cat+ade
 summary(model)
 
 
-####森林图####
+####Step 6.forest plot####
 dat <- read_excel("logistic+forest_plot/bio_pregnancy_fet_forest.xlsx", 
                   col_types = c("guess", "guess", "text", "guess", "guess", "guess"),
                   col_names = F)
@@ -262,7 +262,6 @@ p1<-forestplot(as.matrix(dat[,1:3]),
 
 library(gridExtra)
 
-# 假设 p1, p2, p3, p4 是 forestplot() 生成的图
 p1_grob <- grid.grabExpr(print(p1))
 p2_grob <- grid.grabExpr(print(p2))
 p3_grob <- grid.grabExpr(print(p3))
@@ -273,7 +272,7 @@ grid.arrange(p1_grob,p2_grob,p3_grob,p4_grob, ncol = 1)
 dev.off()
 
 
-####ROC for three models####
+####Step 7. ROC for three models####
 model1 <- glm(cLB_2cat ~ F_age+AFC+good_quality_embryos+PCOS+DOR+adenomyosis+endometriosis,
               data =merged_et,
               family = binomial(),
@@ -326,9 +325,8 @@ roc.test(roc2, roc3, method = "delong")
 # model1 vs model3
 roc.test(roc1, roc3, method = "delong")
 
-####clbr DCA curve####
+####Step 8. clbr DCA curve####
 library(rmda)
-#拆分数据：训练集和测试集
 set.seed(111)
 index <- sort(sample(nrow(merged_et), nrow(merged_et) * 0.7))
 train <- merged_et[index,] 
@@ -386,7 +384,7 @@ dev.off()
 
 
 
-####RCS####
+####Step 9.RCS####
 library(rcssci)
 library(readxl)
 library(rms)
@@ -424,7 +422,7 @@ rcssci_logistic(data=merged_et, y = "cLB_2cat",x = "TyG_BMI",
 
 
 
-####desision tree####
+####Step 10. desision tree####
 library(rpart)
 library(rpart.plot)
 library(skimr)
